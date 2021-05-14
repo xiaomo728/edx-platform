@@ -62,15 +62,15 @@ Goals
   Modulestore-related bugs, but it will result in stale data and not an entirely
   broken experience.
 
-**Modulestore is a Large Dependency**
+**We can reduce the size of the edx-platform monolith.**
   It is possible that smaller apps like ``course_overviews`` and
   ``learning_sequences`` could be extracted from edx-platform and become their
   own app repositories. When that happens, an app that lives in its own
   repository could include those smaller apps as dependencies, simplifying the
   setup and running of tests. Modulestore has proven to be much more challenging
-  to extract in this way, and anything external apps relying on the modulestore
-  will be forced to use dependency inversion mechanisms that are more vulnerable
-  to breaking.
+  to extract in this way, and any external apps relying on the modulestore will
+  be forced to use dependency inversion mechanisms that are more vulnerable to
+  breaking as edx-platform evolves.
 
 
 Conversion Guide
@@ -114,8 +114,7 @@ important caveats to the functions advertised here:
 * Old Mongo courses are not supported. These are soon-to-be-removed courses with
   course keys of the format "Org/Course/Run". All course keys that begin with
   "course-v1:" or "ccx-v1:" are supported.
-* This is a new API, and will be evolving over time to add more API functions
-  and data over time.
+* This is a new API, and new API functions and data will be added over time.
 
 Advanced Use Cases
 ******************
@@ -215,6 +214,11 @@ Celery Task
   increase the time it takes to get data out, and you will almost certainly not
   be able to comprehensively test for all those situations.
 
+  *You must be aggressive about alerting on task failures*. Publishes are
+  infrequent enough to make it so that certain content-dependent errors will not
+  trigger most error rate alerts. You have to be extremely sensitive to outright
+  failures in your task because you may be blocking the publish for a course.
+
 Signal Handler
   ``cms.djangoapps.contentstore.outlines.signals.handlers.listen_for_course_publish``
 
@@ -223,6 +227,21 @@ Signal Handler
   ``course_published`` signal. It's main task is to do some logging and queue
   the celery task.
 
+Management Task
+  ``cms.djangoapps.contentstore.management.commands.backfill_course_outlines.py``
+  ``cms.djangoapps.contentstore.management.commands.update_course_outline.py``
+
+  Management commands to backfill a group of course outlines or to update one
+  particular command. A few things to note:
+
+  1. These commands live in the Studio process, because they are invoking code
+     that will query the Modulestore.
+  2. The backfill command launches a new celery task for every individual
+     course. This is both to control memory usage (successive Modulestore access
+     across courses will leak a lot of memory), as well as to make it easier to
+     see which courses are taking longer and/or causing errors.
+  3. In the long term, you will want a way to trigger backfills from the Django
+     admin, so that you don't need to file a support ticket every time.
 
 LMS Process
 ^^^^^^^^^^^
@@ -234,12 +253,21 @@ time your LMS request is happening, your app is only looking at its own data
 models, or one of the performant Modulestore-alternative APIs.
 
 You should not allow the LMS process to overwrite models written to by the
-course publishing process.
+course publishing process, and you should absolutely not let the LMS push data
+back into the Modulestore. If your application needs to be able to override data
+that comes from publishing, have two separate models–one that's only ever
+updated by course content publishing, and one that's read/write from the LMS.
+When answering queries, your app can look at both models. The edx-when app works
+in this way, capturing start and due date information from the Modulestore, but
+then applying student-specific overrides when serving requests in the LMS. For
+more background on this topic, please see ADR 0005-studio-lms-subdomain-boundaries.rst.
 
-This will have a number of consequences:
 
-* Your app's tests only set up your own models–they never need to set up
-  modulestore content.
-* You will need to alert aggressively on celery task failures. Course publishes
-  are infrequent.
+Django Admin
+^^^^^^^^^^^^
 
+The Django admin for the ``learning_sequences`` app is read-only, and is
+intended to give support and engineering an easier view into the state of
+what's on production. We are planning to add the backfill task as an action to
+a new Django admin page in the contentstore Studio app, using a proxy model to
+CourseOverview in order to get the listing of courses.
