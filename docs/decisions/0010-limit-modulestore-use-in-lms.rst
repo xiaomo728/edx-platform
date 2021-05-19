@@ -246,10 +246,10 @@ Management Task
 LMS Process
 ^^^^^^^^^^^
 
-In the LMS process, your feature should be completely free of Modulestore
-dependencies. In fact, your app should be *entirely* free of Modulestore
-dependencies. All of that code is in the Studio section described above. By the
-time your LMS request is happening, your app is only looking at its own data
+In the LMS process, your feature should not use the Modulestore at all.
+Your LMS app's code should be entirely free of Modulestore dependencies.
+All of the Modulestore-facing code described above should live in the ``./cms/`` source tree and run in the Studio process.
+By the time your LMS request is happening, your app is only looking at its own data
 models, or one of the performant Modulestore-alternative APIs.
 
 You should not allow the LMS process to overwrite models written to by the
