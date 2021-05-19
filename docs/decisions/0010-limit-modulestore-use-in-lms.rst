@@ -35,6 +35,10 @@ Goals
   Modulestore often has obscure edge cases like non-standard course hierarchies,
   inheritable attributes set in places where Studio would not normally offer it
   as an option, A/B tests at the section level, etc.
+  However, LMS-oriented relational data schemas like ``course_overviews`` and
+  ``learning_sequences`` make intentional, documented assumptions about
+  course data. LMS app authors can confidently build on these simpler models
+  without having to mind the complex flexibility of Modulestore data.
 
 **Application behavior is more predictable.**
   Modulestore grabs large chunks of the course at once, leading to major
