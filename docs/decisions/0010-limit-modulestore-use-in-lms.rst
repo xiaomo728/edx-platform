@@ -228,8 +228,8 @@ Signal Handler
   the celery task.
 
 Management Task
-  ``cms.djangoapps.contentstore.management.commands.backfill_course_outlines.py``
-  ``cms.djangoapps.contentstore.management.commands.update_course_outline.py``
+  ``cms.djangoapps.contentstore.management.commands.backfill_course_outlines``
+  ``cms.djangoapps.contentstore.management.commands.update_course_outline``
 
   Management commands to backfill a group of course outlines or to update one
   particular command. A few things to note:
