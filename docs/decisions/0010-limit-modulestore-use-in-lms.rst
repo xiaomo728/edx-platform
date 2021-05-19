@@ -260,7 +260,7 @@ updated by course content publishing, and one that's read/write from the LMS.
 When answering queries, your app can look at both models. The edx-when app works
 in this way, capturing start and due date information from the Modulestore, but
 then applying student-specific overrides when serving requests in the LMS. For
-more background on this topic, please see ADR 0005-studio-lms-subdomain-boundaries.rst.
+more background on this topic, please see `ADR 5: LMS Subdomain Boundaries <./docs/decisions/0005-studio-lms-subdomain-boundaries.rst>`_ .
 
 
 Django Admin
