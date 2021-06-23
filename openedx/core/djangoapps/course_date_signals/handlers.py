@@ -8,7 +8,12 @@ from django.dispatch import receiver
 from edx_when.api import FIELDS_TO_EXTRACT, set_dates_for_course
 from xblock.fields import Scope
 
+<<<<<<< HEAD
 from cms.djangoapps.contentstore.config.waffle import CUSTOM_PLS
+=======
+from cms.djangoapps.contentstore.config.waffle_utils import custom_pls_is_active
+from xmodule.util.misc import is_xblock_an_assignment
+>>>>>>> feat: AA-883 basic prototype for custom pacing pls in studio
 from openedx.core.lib.graph_traversals import get_children, leaf_filter, traverse_pre_order
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import SignalHandler, modulestore

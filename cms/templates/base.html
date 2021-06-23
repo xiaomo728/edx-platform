@@ -8,6 +8,7 @@
 ## Standard imports
 <%namespace name='static' file='static_content.html'/>
 <%!
+from cms.djangoapps.contentstore.config.waffle_utils import custom_pls_is_active
 from django.utils.translation import ugettext as _
 
 from cms.djangoapps.contentstore.config.waffle import CUSTOM_PLS
@@ -157,7 +158,11 @@ from openedx.core.release import RELEASE_LINE
           display_course_number: "${context_course.display_coursenumber | n, js_escaped_string}",
           revision: "${context_course.location.branch | n, js_escaped_string}",
           self_paced: ${ context_course.self_paced | n, dump_js_escaped_json },
+<<<<<<< HEAD
           is_custom_pls_active: ${CUSTOM_PLS.is_enabled(context_course.id) | n, dump_js_escaped_json}
+=======
+          is_custom_pls_active: ${custom_pls_is_active(context_course.id) | n, dump_js_escaped_json}
+>>>>>>> feat: AA-883 basic prototype for custom pacing pls in studio
         });
       </script>
     % endif

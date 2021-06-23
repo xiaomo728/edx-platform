@@ -1,7 +1,7 @@
 """Util methods for Waffle checks"""
 
 
-from cms.djangoapps.contentstore.config.waffle import ENABLE_CHECKLISTS_QUALITY
+from cms.djangoapps.contentstore.config.waffle import ENABLE_CHECKLISTS_QUALITY, CUSTOM_PLS
 
 
 def should_show_checklists_quality(course_key):
