@@ -1,0 +1,37 @@
+<h3 class="modal-section-title"><%- gettext('Grading') %></h3>
+<div class="modal-section-content grading-type">
+    <ul class="list-fields list-input">
+        <li class="field field-grading-type field-select">
+            <label for="grading_type" class="label"><%- gettext('Grade as:') %></label>
+            <select class="input" id="grading_type">
+                <option value="notgraded"><%- gettext('Not Graded') %></option>
+                <% _.each(graderTypes, function(grader) { %>
+                  <option value="<%- grader %>"><%- grader %></option>
+                <% }); %>
+            </select>
+        </li>
+    </ul>
+</div>
+
+<div id="custom_pacing">
+    <ul class="list-fields list-input date-setter">
+        <li class="field field-text field-due-in">
+            <label for="due_in"><%- gettext('Due in:') %></label>
+            <input type="number" id="due_in" name="due_in" value=""
+                placeholder="" autocomplete="off" min="1" max="18"/>
+            <%- gettext('weeks from learner enrollment date')%>
+        </li>
+    </ul>
+
+    <div id="due_num_weeks_projected" class="message">
+        <%- gettext('If a learner starts on ') %> <span id="due_num_weeks_start_date"></span><%- gettext(', this subsection will be due on ') %><span id="due_num_weeks_projected_due_in"></span>
+    </div>
+
+    <div id="due_num_weeks_warning_max" class="message-status error">
+        <%- gettext('The maximum number of weeks this subsection can be due in is 18 weeks from the learner enrollment date.') %>
+    </div>
+
+    <div id="due_num_weeks_warning_min" class="message-status error">
+        <%- gettext('The minimum number of weeks this subsection can be due in is 1 week from the learner enrollment date.') %>
+    </div>
+</div>

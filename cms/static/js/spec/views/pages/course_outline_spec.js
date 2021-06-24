@@ -299,7 +299,7 @@ describe('CourseOutlinePage', function() {
         TemplateHelpers.installTemplates([
             'course-outline', 'xblock-string-field-editor', 'modal-button',
             'basic-modal', 'course-outline-modal', 'release-date-editor',
-            'due-date-editor', 'self-paced-due-date-editor', 'grading-editor', 'publish-editor',
+            'due-date-editor', 'self-paced-grading-editor', 'grading-editor', 'publish-editor',
             'staff-lock-editor', 'unit-access-editor', 'content-visibility-editor',
             'settings-modal-tabs', 'timed-examination-preference-editor', 'access-editor',
             'show-correctness-editor', 'highlights-editor', 'highlights-enable-editor',
@@ -2149,6 +2149,7 @@ describe('CourseOutlinePage', function() {
                 createMockSubsectionJSON({
                     graded: true,
                     due_num_weeks: 3,
+                    start: '2014-07-09T00:00:00Z',
                     format: 'Lab',
                     has_explicit_staff_lock: true,
                     staff_only_message: true,
@@ -2200,6 +2201,10 @@ describe('CourseOutlinePage', function() {
                 AjaxHelpers.respondWithJson(requests, mockCustomPacingServerValuesJson);
                 AjaxHelpers.expectNoRequests(requests);
 
+                expect($('.outline-subsection .status-grading-date')).toContainText(
+                    'Due in: 3 weeks'
+                );
+
                 expect($('.outline-subsection .status-grading-value')).toContainText(
                     'Lab'
                 );
@@ -2211,6 +2216,7 @@ describe('CourseOutlinePage', function() {
                 outlinePage.$('.outline-item .outline-subsection .configure-button').click();
                 expect($('#due_in').val()).toBe('3');
                 expect($('#grading_type').val()).toBe('Lab');
+                expect($('#due_num_weeks_projected.message').css('display')).not.toBe('none');
                 expect($('input[name=content-visibility][value=staff_only]').is(':checked')).toBe(true);
                 expect($('input.timed_exam').is(':checked')).toBe(false);
                 expect($('input.proctored_exam').is(':checked')).toBe(false);
@@ -2224,20 +2230,20 @@ describe('CourseOutlinePage', function() {
 
                 // when due number of weeks goes over 18
                 selectDueNumWeeksSubsection('19');
-                expect($('#due-num-weeks-warning-max').css('display')).not.toBe('none');
+                expect($('#due_num_weeks_warning_max').css('display')).not.toBe('none');
                 expect($('.wrapper-modal-window .action-save').prop('disabled')).toBe(true);
                 expect($('.wrapper-modal-window .action-save').hasClass('is-disabled')).toBe(true);
 
                 // when due number of weeks is less than 1
                 selectDueNumWeeksSubsection('-1');
-                expect($('#due-num-weeks-warning-min').css('display')).not.toBe('none');
+                expect($('#due_num_weeks_warning_min').css('display')).not.toBe('none');
                 expect($('.wrapper-modal-window .action-save').prop('disabled')).toBe(true);
                 expect($('.wrapper-modal-window .action-save').hasClass('is-disabled')).toBe(true);
 
                 // when no validation error should show up
                 selectDueNumWeeksSubsection('10');
-                expect($('#due-num-weeks-warning-max').css('display')).toBe('none');
-                expect($('#due-num-weeks-warning-min').css('display')).toBe('none');
+                expect($('#due_num_weeks_warning_max').css('display')).toBe('none');
+                expect($('#due_num_weeks_warning_min').css('display')).toBe('none');
                 expect($('.wrapper-modal-window .action-save').prop('disabled')).toBe(false);
                 expect($('.wrapper-modal-window .action-save').hasClass('is-disabled')).toBe(false);
             });
@@ -2253,6 +2259,10 @@ describe('CourseOutlinePage', function() {
                 // This is the response for the subsequent fetch operation.
                 AjaxHelpers.respondWithJson(requests, mockCustomPacingServerValuesJson);
 
+                expect($('.outline-subsection .status-grading-date')).toContainText(
+                    'Due in: 3 weeks'
+                );
+
                 expect($('.outline-subsection .status-grading-value')).toContainText(
                     'Lab'
                 );
@@ -2264,6 +2274,7 @@ describe('CourseOutlinePage', function() {
                 expect($('#due_in').val()).toBe('3');
                 expect($('#grading_type').val()).toBe('Lab');
                 expect($('input[name=content-visibility][value=staff_only]').is(':checked')).toBe(true);
+                expect($('#due_num_weeks_projected.message').css('display')).not.toBe('none');
 
                 $('.wrapper-modal-window .due-date-input .action-clear').click();
                 expect($('#due_in').val()).toBe('');
@@ -2280,6 +2291,7 @@ describe('CourseOutlinePage', function() {
                     createMockSectionJSON({}, [createMockSubsectionJSON()])
                 );
 
+                expect($('.outline-subsection .status-grading-date')).not.toExist();
                 expect($('.outline-subsection .status-grading-value')).not.toExist();
                 expect($('.outline-subsection .status-message-copy')).not.toContainText(
                     'Contains staff only content'

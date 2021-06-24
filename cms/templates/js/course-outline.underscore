@@ -246,6 +246,34 @@ if (is_proctored_exam) {
                         <% } %>
                     </p>
                 </div>
+                <% if (course.get('self_paced') && course.get('is_custom_pls_active') && xblockInfo.get('due_num_weeks')) { %>
+                    <div class="status-grading">
+                        <p>
+                            <span class="icon fa fa-calendar" aria-hidden="true"></span>
+                            <span>
+                                <%- gettext('Custom due date: ') %><%- xblockInfo.get('due_num_weeks') %> <%- ngettext('week','weeks', xblockInfo.get('due_num_weeks')) %>
+                                <%- gettext('from enrollment') %>
+                            </span>
+                        <p>
+                    </div>
+                <% } %>
+            <% } else if (course.get('self_paced') && course.get('is_custom_pls_active') && xblockInfo.get('due_num_weeks')) { %>
+                <div class="status-grading">
+                    <p>
+                        <span class="sr status-grading-label"> <%- gettext('Graded as:') %> </span>
+                        <span class="icon fa fa-check" aria-hidden="true"></span>
+                        <span class="status-grading-value"> <%- gradingType %> </span>
+                    </p>
+                </div>
+                <div class="status-grading">
+                    <p>
+                        <span class="icon fa fa-calendar" aria-hidden="true"></span>
+                        <span>
+                            <%- gettext('Custom due date: ') %><%- xblockInfo.get('due_num_weeks') %> <%- ngettext('week','weeks', xblockInfo.get('due_num_weeks')) %>
+                            <%- gettext('from enrollment') %>
+                        </span>
+                    <p>
+                </div>
             <% } %>
             <div class="status-hide-after-due">
                 <p>
